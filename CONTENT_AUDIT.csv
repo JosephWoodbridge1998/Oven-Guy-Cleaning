@@ -1,0 +1,13 @@
+Original page,Source content,New location,Status
+Home,Business name and 07711 793512,"Hero, navigation and contact",Preserved
+Prices,"Iver Heath, all nine priced/service rows plus minimum call-out",Services and complete price list,Preserved; BBQ has no numeric price
+Prices,Hobs £5 per hob,Price list,Original wording preserved and flagged for clarification
+Prices,Before/after oven door images,Not displayed,Labels found; actual companion image files absent
+Book now,"First name, last name, email, phone, oven requirements",Enquiry form,All five field groups present
+Book now,"Within two hours, Monday–Friday 10am–6pm",Enquiry process,Preserved as published wording; current commitment needs confirmation
+Book now,Phone call to arrange appointment,Enquiry process,Preserved
+Book now,Original submission destination and success message,Replaced by explicit mailto flow,No backend carried across; no misleading sent confirmation
+Review,17 original testimonials and names,Three featured and fourteen expandable,All preserved verbatim
+Contact (not supplied),Email and social links,Email from earlier indexed contact lookup; social links omitted,Not a complete contact-page migration
+Home and other pages,Logo and images referenced in saved HTML,Original proposed wordmark and SVG illustration,Assets not supplied; not redrawn or falsely presented as original
+All pages,Wix navigation and footer credit,New in-page navigation and independent-concept footer,Platform boilerplate intentionally not reproduced

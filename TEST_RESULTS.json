@@ -1,0 +1,9 @@
+{
+  "tests": [
+    {"noOverflow":true,"anchors":true,"testimonials":17,"requiredFields":5,"reviews_expand":true,"form_status":true,"viewport":"390x844","pageErrors":[]},
+    {"noOverflow":true,"anchors":true,"testimonials":17,"requiredFields":5,"reviews_expand":true,"form_status":true,"viewport":"320x700","pageErrors":[]},
+    {"noOverflow":true,"anchors":true,"testimonials":17,"requiredFields":5,"reviews_expand":true,"form_status":true,"viewport":"1440x1000","pageErrors":[]}
+  ],
+  "browser": "Local Chromium via Playwright",
+  "scope": "Recorded smoke tests from concept generation. Not exhaustive cross-browser or accessibility certification. External email delivery and live publication not tested. No email sent."
+}
