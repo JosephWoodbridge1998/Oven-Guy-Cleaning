@@ -1,0 +1,101 @@
+name: Replace hero illustration with uploaded work photos
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/replace-hero-photos.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: apply-brand-theme
+  cancel-in-progress: false
+jobs:
+  hero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Replace hero without changing the rest of the page
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          for name in ('hero-before.jpg', 'hero-after.jpg'):
+              if not Path('assets/work', name).is_file():
+                  raise ValueError(f'Missing uploaded image: {name}')
+          path = Path('index.html')
+          page = path.read_text(encoding='utf-8')
+          markup = '''<div class="hero-pair" aria-label="Oven cleaning before and after"><figure><a href="assets/work/hero-before.jpg" aria-label="View before-cleaning photograph"><img src="assets/work/hero-before.jpg" alt="Oven before cleaning; uploaded as hero-before.jpg" fetchpriority="high" decoding="async"></a><figcaption>Before cleaning</figcaption></figure><figure><a href="assets/work/hero-after.jpg" aria-label="View after-cleaning photograph"><img src="assets/work/hero-after.jpg" alt="Oven after cleaning; uploaded as hero-after.jpg" decoding="async"></a><figcaption>After cleaning</figcaption></figure></div>'''
+          if '<div class="hero-pair"' not in page:
+              pattern = r'<div class="art"><svg\b.*?</svg><div class="art-label">.*?</div></div>'
+              page, count = re.subn(pattern, lambda match: markup, page, flags=re.S)
+              if count != 1:
+                  raise ValueError(f'Expected one hero illustration, found {count}; no changes saved')
+          css = '''<style id="hero-photo-style">.hero-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;min-width:0;align-items:start}.hero-pair figure{margin:0;overflow:hidden;border:1px solid #505050;border-radius:10px;background:#171717}.hero-pair a{display:block}.hero-pair img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:#171717}.hero-pair figcaption{padding:12px 14px;color:#fff;font-size:13px;font-weight:700;border-top:1px solid #505050}.hero-pair figure:last-child{border-color:#ae4141}.hero-pair a:focus-visible{outline:3px solid #ff8a8a;outline-offset:-4px}@media(max-width:760px){.hero-pair{grid-template-columns:1fr;width:100%;max-width:500px;margin:auto}}</style>'''
+          if 'id="hero-photo-style"' not in page:
+              if page.count('</head>') != 1:
+                  raise ValueError('Expected one head closing tag')
+              page = page.replace('</head>', css + '</head>', 1)
+          page = page.replace('The hero illustration remains original artwork, not a photograph of a cleaning result.', 'The homepage hero also displays the uploaded before-and-after photographs, labelled according to their supplied filenames.')
+          page = page.replace('Based on four saved original pages · Original illustrative artwork', 'Based on four saved original pages · Portfolio photography')
+          path.write_text(page, encoding='utf-8')
+          readme_path = Path('README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          readme = readme.replace('original SVG artwork, local portfolio photographs', 'local hero and portfolio photographs')
+          readme = readme.replace('The design wordmark and SVG are proposed creative assets, not the original business logo.', 'The design wordmark is a proposed creative asset, not the original business logo. The original SVG hero illustration has been replaced with the uploaded work photographs.')
+          note = '\n\n## Homepage hero photographs\nThe hero uses assets/work/hero-before.jpg and assets/work/hero-after.jpg, with labels based on the supplied filenames. The two panels sit side by side on desktop and stack on mobile. Photographs use contain sizing rather than cropping. The existing lower work gallery is unchanged. Keep all local images with index.html and theme.css when publishing.\n'
+          if '## Homepage hero photographs' not in readme:
+              readme += note
+          readme_path.write_text(readme, encoding='utf-8')
+          PY
+      - name: Install browser checks
+        run: |
+          python -m pip install 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+      - name: Test hero and existing mobile and desktop layouts
+        run: |
+          python scripts/test_brand_theme.py
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          import json
+          results = []
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch()
+              for width, height in [(320,700),(390,844),(1440,1000)]:
+                  page = browser.new_page(viewport={'width':width,'height':height})
+                  page.goto(Path('index.html').resolve().as_uri(), wait_until='load')
+                  images = page.locator('.hero-pair img')
+                  assert images.count() == 2
+                  assert page.locator('.hero svg').count() == 0
+                  assert images.evaluate_all('(imgs) => imgs.every(i => i.complete && i.naturalWidth > 0)')
+                  assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+                  columns = page.locator('.hero-pair').evaluate('(e) => getComputedStyle(e).gridTemplateColumns.split(" ").length')
+                  assert columns == (1 if width <= 760 else 2)
+                  page.screenshot(path=f'/tmp/brand-theme-checks/hero-{width}.png', full_page=True)
+                  results.append({'viewport':f'{width}x{height}','heroImagesLoaded':True,'cartoonRemoved':True,'columns':columns,'noHorizontalOverflow':True})
+                  page.close()
+              browser.close()
+          Path('HERO_TEST_RESULTS.json').write_text(json.dumps({'checks':results,'scope':'Local Chromium smoke tests; no live deployment or external email delivery verified.'},indent=2)+'\n',encoding='utf-8')
+          PY
+      - name: Save checked previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-photo-previews
+          path: /tmp/brand-theme-checks
+      - name: Commit the tested homepage update
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html README.md THEME_TEST_RESULTS.json HERO_TEST_RESULTS.json
+          if git diff --cached --quiet; then
+            echo 'Hero photographs already applied'
+          else
+            git commit -m 'feat: replace cartoon hero with uploaded before-and-after photos'
+            git push origin HEAD:main
+          fi
