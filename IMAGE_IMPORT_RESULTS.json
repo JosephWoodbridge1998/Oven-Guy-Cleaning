@@ -1,0 +1,23 @@
+{
+  "status": "Both images downloaded and decoded successfully",
+  "images": [
+    {
+      "stage": "before",
+      "source": "https://static.wixstatic.com/media/d64147_1a35035c2ac44fd899fb063850225e44~mv2.jpg",
+      "width": 720,
+      "height": 540,
+      "sha256": "5bf14487e33548c6dfb514724b7d3bf02e3fcb828b0b16aac7cc32119f3babdc",
+      "file": "assets/work/oven-door-before.jpg"
+    },
+    {
+      "stage": "after",
+      "source": "https://static.wixstatic.com/media/d64147_1347fda6c62d4386ab4cdbee171e85ff~mv2.jpg",
+      "width": 642,
+      "height": 436,
+      "sha256": "bd20c39e2bccb64063f827d4aad66518ed6c783c2c9240760247545fb4aa6d1d",
+      "file": "assets/work/oven-door-after.jpg"
+    }
+  ],
+  "label_basis": "Original saved Prices page alt labels; not independent job verification",
+  "browser_testing": "Not performed by this import"
+}
