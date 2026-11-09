@@ -1,46 +1,54 @@
-name: Apply original brand theme
+name: Check current brand styling
 on:
   push:
     branches: [main]
-    paths: ['theme.css', 'scripts/apply_brand_theme.py', 'scripts/test_brand_theme.py', '.github/workflows/apply-brand-theme.yml']
+    paths: ['theme.css', 'index.html', '.github/workflows/apply-brand-theme.yml']
   workflow_dispatch:
 permissions:
-  contents: write
-concurrency:
-  group: apply-brand-theme
-  cancel-in-progress: false
+  contents: read
 jobs:
-  theme:
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Prepare the theme link and illustration
-        run: python scripts/apply_brand_theme.py
       - name: Install browser checks
         run: |
           python -m pip install 'playwright>=1.50,<2'
           python -m playwright install --with-deps chromium
-      - name: Check mobile and desktop rendering
-        run: python scripts/test_brand_theme.py
-      - name: Save checked previews
+      - name: Check the current page without rewriting its theme
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          import json
+          Path('/tmp/current-brand-checks').mkdir(exist_ok=True)
+          results = []
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch()
+              for width,height in [(320,700),(390,844),(820,1180),(1440,1000)]:
+                  page = browser.new_page(viewport={'width':width,'height':height})
+                  errors = []
+                  page.on('pageerror',lambda error:errors.append(str(error)))
+                  page.goto(Path('index.html').resolve().as_uri(),wait_until='load')
+                  page.locator('footer').scroll_into_view_if_needed()
+                  page.wait_for_function('Array.from(document.images).every(i=>i.complete)')
+                  result = page.evaluate('''() => ({noOverflow:document.documentElement.scrollWidth<=innerWidth,imagesLoaded:Array.from(document.images).every(i=>i.naturalWidth>0),background:getComputedStyle(document.body).backgroundColor,logos:document.querySelectorAll('header .brand-logo img').length,heroImages:document.querySelectorAll('.hero-pair img').length,reviews:document.querySelectorAll('blockquote').length,anchorsValid:Array.from(document.querySelectorAll('a[href^="#"]')).every(a=>document.querySelector(a.getAttribute('href')))})''')
+                  assert result['noOverflow'] and result['imagesLoaded'] and result['anchorsValid'],result
+                  assert result['background']=='rgb(0, 0, 0)' and result['logos']==2 and result['heroImages']==2 and result['reviews']==17 and not errors,result
+                  page.evaluate('window.scrollTo(0,0)')
+                  page.screenshot(path=f'/tmp/current-brand-checks/preview-{width}.png',full_page=True)
+                  result.update({'viewport':f'{width}x{height}','pageErrors':errors})
+                  results.append(result)
+                  page.close()
+              browser.close()
+          Path('/tmp/current-brand-checks/results.json').write_text(json.dumps({'checks':results,'scope':'Local Chromium smoke tests only; live deployment and full accessibility audit not performed.'},indent=2)+'\n')
+          PY
+      - name: Save current-theme checks and previews
         uses: actions/upload-artifact@v4
         with:
-          name: brand-theme-previews
-          path: /tmp/brand-theme-checks
-      - name: Commit tested homepage theme
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html THEME_TEST_RESULTS.json
-          if git diff --cached --quiet; then
-            echo 'Theme already applied'
-          else
-            git commit -m 'style: apply tested charcoal and red theme to homepage'
-            git push origin HEAD:main
-          fi
+          name: black-yellow-orange-previews
+          path: /tmp/current-brand-checks
