@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "viewport": "320x700",
+      "bothLogoComponentsLoaded": true,
+      "containSizing": true,
+      "headerFitsViewport": true,
+      "heroPhotographsPreserved": true
+    },
+    {
+      "viewport": "390x844",
+      "bothLogoComponentsLoaded": true,
+      "containSizing": true,
+      "headerFitsViewport": true,
+      "heroPhotographsPreserved": true
+    },
+    {
+      "viewport": "1440x1000",
+      "bothLogoComponentsLoaded": true,
+      "containSizing": true,
+      "headerFitsViewport": true,
+      "heroPhotographsPreserved": true
+    }
+  ],
+  "scope": "Local Chromium smoke tests; not a full accessibility audit or live deployment verification."
+}

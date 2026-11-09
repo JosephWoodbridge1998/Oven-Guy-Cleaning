@@ -9,5 +9,5 @@ Book now,Phone call to arrange appointment,Enquiry process,Preserved
 Book now,Original submission destination and success message,Replaced by explicit mailto flow,No backend carried across; no misleading sent confirmation
 Review,17 original testimonials and names,Three featured and fourteen expandable,All preserved verbatim
 Contact (not supplied),Email and social links,Email from earlier indexed contact lookup; social links omitted,Not a complete contact-page migration
-Home and other pages,Logo and images referenced in saved HTML,Original proposed wordmark and SVG illustration,Original oven-door work photos imported; original logo still absent; proposed wordmark and illustration retained
+Home and other pages,Logo and images referenced in saved HTML,Original header icon and wordmark; hero and work photographs,Original uploaded branding integrated; imported work gallery and uploaded hero photos preserved
 All pages,Wix navigation and footer credit,New in-page navigation and independent-concept footer,Platform boilerplate intentionally not reproduced
