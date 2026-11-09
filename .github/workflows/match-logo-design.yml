@@ -1,0 +1,78 @@
+name: Match website design to original branding
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/match_logo_theme.py', '.github/workflows/match-logo-design.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: apply-brand-theme
+  cancel-in-progress: false
+jobs:
+  design:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install colour analysis and browser checks
+        run: |
+          python -m pip install 'Pillow>=11,<13' 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+      - name: Sample uploaded branding and prepare cohesive design
+        run: python scripts/match_logo_theme.py
+      - name: Check logo, images, layout and colour application
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          import json
+          report = json.loads(Path('BRAND_THEME_REPORT.json').read_text())
+          assert all(v >= 4.5 for v in report['contrast'].values()), report['contrast']
+          results = []
+          Path('/tmp/logo-design-previews').mkdir(exist_ok=True)
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch()
+              for width,height in [(320,700),(390,844),(820,1180),(1440,1000)]:
+                  page = browser.new_page(viewport={'width':width,'height':height})
+                  errors = []
+                  page.on('pageerror',lambda error:errors.append(str(error)))
+                  page.goto(Path('index.html').resolve().as_uri(),wait_until='load')
+                  page.locator('footer').scroll_into_view_if_needed()
+                  page.wait_for_function('Array.from(document.images).every(i => i.complete)')
+                  result = page.evaluate('''() => ({noOverflow:document.documentElement.scrollWidth<=innerWidth,imagesLoaded:Array.from(document.images).every(i=>i.naturalWidth>0),logoImages:document.querySelectorAll('header .brand-logo img').length,heroImages:document.querySelectorAll('.hero-pair img').length,reviews:document.querySelectorAll('blockquote').length,requiredFields:document.querySelectorAll('[required]').length,anchorsValid:Array.from(document.querySelectorAll('a[href^="#"]')).every(a=>document.querySelector(a.getAttribute('href'))),themeToken:getComputedStyle(document.documentElement).getPropertyValue('--logo-background').trim()})''')
+                  assert result['noOverflow'] and result['imagesLoaded'] and result['anchorsValid'], result
+                  assert result['logoImages']==2 and result['heroImages']==2 and result['reviews']==17 and result['requiredFields']==5, result
+                  assert result['themeToken']==report['tokens']['background'] and not errors, result
+                  page.locator('.review-archive summary').click()
+                  assert page.locator('.review-archive').get_attribute('open') is not None
+                  page.locator('.review-archive summary').click()
+                  page.evaluate('window.scrollTo(0,0)')
+                  page.screenshot(path=f'/tmp/logo-design-previews/design-{width}.png',full_page=True)
+                  result.update({'viewport':f'{width}x{height}','pageErrors':errors,'reviewsExpand':True})
+                  results.append(result)
+                  page.close()
+              browser.close()
+          Path('BRAND_DESIGN_TEST_RESULTS.json').write_text(json.dumps({'checks':results,'scope':'Local Chromium smoke tests and selected colour-pair contrast checks, not a complete accessibility audit or live deployment verification.'},indent=2)+'\n',encoding='utf-8')
+          PY
+      - name: Save checked design previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: logo-matched-design-previews
+          path: /tmp/logo-design-previews
+      - name: Commit tested brand-matched stylesheet
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add theme.css BRAND_THEME_REPORT.json BRAND_DESIGN_TEST_RESULTS.json
+          if git diff --cached --quiet; then
+            echo 'Brand-matched design already current'
+          else
+            git commit -m 'design: unify website styling with original logo and wordmark'
+            git push origin HEAD:main
+          fi
