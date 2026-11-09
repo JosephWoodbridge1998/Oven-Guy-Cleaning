@@ -1,0 +1,33 @@
+:root{color-scheme:dark;--brand-background:#232323;--brand-panel:#303030;--brand-red:#d00000;--brand-text:#ffffff;--brand-muted:#d0d0d0;--brand-line:#505050}
+body{background:var(--brand-background);color:var(--brand-text);font-family:Arial,Helvetica,sans-serif}
+header{background:#0b0b0bf5;border-color:#444}
+.notice{background:#151515;color:#ddd}
+.brand span,h1 em{color:#ff5c5c}
+.brand small,nav a{color:#eee}
+nav a:hover,nav a:focus-visible{color:#ff7070}
+.button{background:var(--brand-red);border-color:var(--brand-red);color:#fff}
+.button:hover{background:#ac0000;border-color:#ac0000;color:#fff}
+.button.secondary{background:transparent;border-color:#bbb;color:#fff}
+.button.secondary:hover{background:#3c3c3c;border-color:#fff}
+.lead,.intro,.small,.note,.card p,details p{color:var(--brand-muted)}
+.pill{background:#3b1f1f;color:#fff;border:1px solid #8c4141}
+.art{background:#171717;border:1px solid #444}
+.art-label{background:#303030;color:#fff;border-color:#555;box-shadow:0 8px 30px #0005}
+.strip,footer{border-color:var(--brand-line)}
+.strip{background:#191919;color:#eee}
+.card,.price-list,.form,.work-gallery figure{background:var(--brand-panel);color:#fff;border-color:var(--brand-line)}
+.num,.dark .num{color:#ff8a8a}
+.prices{background:#1b1b1b}
+.row,details{border-color:var(--brand-line)}
+.dark{background:#101010;color:#fff}
+.dark p{color:#d0d0d0}
+.step{border-color:#555}
+.reviews{background:#282828}
+input,textarea{background:#202020;color:#fff;border-color:#777}
+input::placeholder,textarea::placeholder{color:#bfbfbf}
+.links small,footer{color:#d0d0d0}
+footer{background:#0b0b0b}
+.work-gallery img{background:#171717}
+.work-gallery figcaption{color:#fff}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline-color:#ff8a8a}
+.skip{background:#fff;color:#111}
