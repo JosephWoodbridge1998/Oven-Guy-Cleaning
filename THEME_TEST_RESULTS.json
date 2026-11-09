@@ -1,0 +1,45 @@
+{
+  "browser": "Chromium",
+  "checks": [
+    {
+      "noOverflow": true,
+      "background": "rgb(35, 35, 35)",
+      "imagesLoaded": true,
+      "anchorsValid": true,
+      "testimonials": 17,
+      "requiredFields": 5,
+      "gallery": true,
+      "themeLoaded": true,
+      "reviewsExpand": true,
+      "pageErrors": [],
+      "viewport": "320x700"
+    },
+    {
+      "noOverflow": true,
+      "background": "rgb(35, 35, 35)",
+      "imagesLoaded": true,
+      "anchorsValid": true,
+      "testimonials": 17,
+      "requiredFields": 5,
+      "gallery": true,
+      "themeLoaded": true,
+      "reviewsExpand": true,
+      "pageErrors": [],
+      "viewport": "390x844"
+    },
+    {
+      "noOverflow": true,
+      "background": "rgb(35, 35, 35)",
+      "imagesLoaded": true,
+      "anchorsValid": true,
+      "testimonials": 17,
+      "requiredFields": 5,
+      "gallery": true,
+      "themeLoaded": true,
+      "reviewsExpand": true,
+      "pageErrors": [],
+      "viewport": "1440x1000"
+    }
+  ],
+  "scope": "Local browser smoke tests; not cross-browser or complete accessibility certification. No emails sent and no live deployment verified."
+}
