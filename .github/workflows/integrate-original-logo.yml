@@ -1,0 +1,108 @@
+name: Integrate original icon and wordmark
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/integrate-original-logo.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: apply-brand-theme
+  cancel-in-progress: false
+jobs:
+  logo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Integrate uploaded logo components
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import csv
+          for name in ('oven-guy-icon.png', 'oven-guy-wordmark.png'):
+              if not Path('assets/work', name).is_file():
+                  raise ValueError(f'Missing logo component: {name}')
+          path = Path('index.html')
+          page = path.read_text(encoding='utf-8')
+          original = '<a class="brand" href="#main">oven<span>guy.</span><small>CLEANING · IVER HEATH</small></a>'
+          replacement = '<a class="brand brand-logo" href="#main" aria-label="Oven Guy Cleaning — home"><img class="brand-icon" src="assets/work/oven-guy-icon.png" alt="" width="56" height="64" decoding="async"><img class="brand-wordmark" src="assets/work/oven-guy-wordmark.png" alt="" width="200" height="64" decoding="async"></a>'
+          if 'class="brand brand-logo"' not in page:
+              if page.count(original) != 1:
+                  raise ValueError('Expected one temporary header wordmark; no changes saved')
+              page = page.replace(original, replacement, 1)
+          css = '<style id="original-logo-style">.brand.brand-logo{display:inline-flex;align-items:center;gap:12px;max-width:100%;flex-shrink:0;line-height:1}.brand-logo img{display:block;object-fit:contain;flex-shrink:0}.brand-logo .brand-icon{width:56px;height:64px}.brand-logo .brand-wordmark{width:200px;height:64px}@media(max-width:760px){.brand-logo .brand-icon{width:44px;height:52px}.brand-logo .brand-wordmark{width:min(190px,58vw);height:52px}}</style>'
+          if 'id="original-logo-style"' not in page:
+              if page.count('</head>') != 1:
+                  raise ValueError('Expected one head closing tag')
+              page = page.replace('</head>', css + '</head>', 1)
+          path.write_text(page, encoding='utf-8')
+          readme_path = Path('README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          readme = readme.replace('Social links and the original logo are still not integrated.', 'Social links remain unverified. The original icon and wordmark are integrated from the uploaded files.')
+          readme = readme.replace('The design wordmark is a proposed creative asset, not the original business logo.', 'The header uses the original icon and wordmark uploaded by the repository owner, without recolouring or cropping.')
+          note = '\n\n## Original header branding\nThe header combines assets/work/oven-guy-icon.png and assets/work/oven-guy-wordmark.png. Each image is contained within a responsive box without distortion or cropping. Original colours and backgrounds are preserved. The combined link has the accessible name Oven Guy Cleaning — home. This integration does not enable hosting.\n'
+          if '## Original header branding' not in readme:
+              readme += note
+          readme_path.write_text(readme, encoding='utf-8')
+          with Path('CONTENT_AUDIT.csv').open(encoding='utf-8', newline='') as stream:
+              audit = list(csv.reader(stream))
+          for row in audit[1:]:
+              if row[0] == 'Home and other pages':
+                  row[2] = 'Original header icon and wordmark; hero and work photographs'
+                  row[3] = 'Original uploaded branding integrated; imported work gallery and uploaded hero photos preserved'
+          with Path('CONTENT_AUDIT.csv').open('w', encoding='utf-8', newline='') as stream:
+              csv.writer(stream).writerows(audit)
+          PY
+      - name: Install browser checks
+        run: |
+          python -m pip install 'playwright>=1.50,<2'
+          python -m playwright install --with-deps chromium
+      - name: Check existing page and responsive logo
+        run: |
+          python scripts/test_brand_theme.py
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          import json
+          results = []
+          with sync_playwright() as pw:
+              browser = pw.chromium.launch()
+              for width, height in [(320,700),(390,844),(1440,1000)]:
+                  page = browser.new_page(viewport={'width':width,'height':height})
+                  page.goto(Path('index.html').resolve().as_uri(), wait_until='load')
+                  logos = page.locator('header .brand-logo img')
+                  assert logos.count() == 2
+                  assert logos.evaluate_all('(imgs) => imgs.every(i => i.complete && i.naturalWidth > 0 && getComputedStyle(i).objectFit === "contain")')
+                  assert page.locator('header .brand-logo').get_attribute('aria-label') == 'Oven Guy Cleaning — home'
+                  assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+                  bounds = page.locator('header .brand-logo').bounding_box()
+                  assert bounds['x'] >= 0 and bounds['x'] + bounds['width'] <= width
+                  assert page.locator('.hero-pair img').count() == 2
+                  page.screenshot(path=f'/tmp/brand-theme-checks/logo-{width}.png', full_page=True)
+                  results.append({'viewport':f'{width}x{height}','bothLogoComponentsLoaded':True,'containSizing':True,'headerFitsViewport':True,'heroPhotographsPreserved':True})
+                  page.close()
+              browser.close()
+          Path('LOGO_TEST_RESULTS.json').write_text(json.dumps({'checks':results,'scope':'Local Chromium smoke tests; not a full accessibility audit or live deployment verification.'},indent=2)+'\n',encoding='utf-8')
+          PY
+      - name: Save checked previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-logo-previews
+          path: /tmp/brand-theme-checks
+      - name: Commit tested original branding
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html README.md CONTENT_AUDIT.csv THEME_TEST_RESULTS.json LOGO_TEST_RESULTS.json
+          if git diff --cached --quiet; then
+            echo 'Original logo already integrated'
+          else
+            git commit -m 'feat: display original icon and wordmark in website header'
+            git push origin HEAD:main
+          fi
