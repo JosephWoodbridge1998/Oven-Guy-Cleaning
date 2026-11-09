@@ -1,0 +1,32 @@
+{
+  "tokens": {
+    "background": "#000000",
+    "panel": "#101010",
+    "ink": "#f5f5f5",
+    "accent": "#fca848",
+    "buttonInk": "#000000",
+    "textAccent": "#fca848",
+    "muted": "#bababa",
+    "line": "#3d3d3d",
+    "header": "#000000",
+    "alternate": "#000000"
+  },
+  "accentBasis": "dominant saturated wordmark colour; icon used only if wordmark has no saturated pixels",
+  "backgroundBasis": "most common opaque perimeter colour from uploaded branding; charcoal fallback for fully transparent edges",
+  "assets": [
+    {
+      "path": "assets/work/oven-guy-wordmark.png",
+      "sha256": "a8b32303dbe941aefe9fc308aee3e9cd4b73d8a3428722ee3970ee3378671b49"
+    },
+    {
+      "path": "assets/work/oven-guy-icon.png",
+      "sha256": "c7c5fb2acbdca0d4329c3dae85c0446015c58580eee236ee4b7c9273b1f76f61"
+    }
+  ],
+  "contrast": {
+    "body": 19.261973035868383,
+    "button": 10.833718013610648,
+    "accentOnBackground": 10.833718013610648
+  },
+  "artwork": "Original images are unchanged; no filters, cropping or recolouring"
+}

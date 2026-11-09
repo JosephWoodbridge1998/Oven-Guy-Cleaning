@@ -1,0 +1,57 @@
+{
+  "checks": [
+    {
+      "noOverflow": true,
+      "imagesLoaded": true,
+      "logoImages": 2,
+      "heroImages": 2,
+      "reviews": 17,
+      "requiredFields": 5,
+      "anchorsValid": true,
+      "themeToken": "#000000",
+      "viewport": "320x700",
+      "pageErrors": [],
+      "reviewsExpand": true
+    },
+    {
+      "noOverflow": true,
+      "imagesLoaded": true,
+      "logoImages": 2,
+      "heroImages": 2,
+      "reviews": 17,
+      "requiredFields": 5,
+      "anchorsValid": true,
+      "themeToken": "#000000",
+      "viewport": "390x844",
+      "pageErrors": [],
+      "reviewsExpand": true
+    },
+    {
+      "noOverflow": true,
+      "imagesLoaded": true,
+      "logoImages": 2,
+      "heroImages": 2,
+      "reviews": 17,
+      "requiredFields": 5,
+      "anchorsValid": true,
+      "themeToken": "#000000",
+      "viewport": "820x1180",
+      "pageErrors": [],
+      "reviewsExpand": true
+    },
+    {
+      "noOverflow": true,
+      "imagesLoaded": true,
+      "logoImages": 2,
+      "heroImages": 2,
+      "reviews": 17,
+      "requiredFields": 5,
+      "anchorsValid": true,
+      "themeToken": "#000000",
+      "viewport": "1440x1000",
+      "pageErrors": [],
+      "reviewsExpand": true
+    }
+  ],
+  "scope": "Local Chromium smoke tests and selected colour-pair contrast checks, not a complete accessibility audit or live deployment verification."
+}

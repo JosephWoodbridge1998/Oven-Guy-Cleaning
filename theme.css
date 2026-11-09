@@ -1,33 +1,35 @@
-:root{color-scheme:dark;--brand-background:#232323;--brand-panel:#303030;--brand-red:#d00000;--brand-text:#ffffff;--brand-muted:#d0d0d0;--brand-line:#505050}
-body{background:var(--brand-background);color:var(--brand-text);font-family:Arial,Helvetica,sans-serif}
-header{background:#0b0b0bf5;border-color:#444}
-.notice{background:#151515;color:#ddd}
-.brand span,h1 em{color:#ff5c5c}
-.brand small,nav a{color:#eee}
-nav a:hover,nav a:focus-visible{color:#ff7070}
-.button{background:var(--brand-red);border-color:var(--brand-red);color:#fff}
-.button:hover{background:#ac0000;border-color:#ac0000;color:#fff}
-.button.secondary{background:transparent;border-color:#bbb;color:#fff}
-.button.secondary:hover{background:#3c3c3c;border-color:#fff}
-.lead,.intro,.small,.note,.card p,details p{color:var(--brand-muted)}
-.pill{background:#3b1f1f;color:#fff;border:1px solid #8c4141}
-.art{background:#171717;border:1px solid #444}
-.art-label{background:#303030;color:#fff;border-color:#555;box-shadow:0 8px 30px #0005}
-.strip,footer{border-color:var(--brand-line)}
-.strip{background:#191919;color:#eee}
-.card,.price-list,.form,.work-gallery figure{background:var(--brand-panel);color:#fff;border-color:var(--brand-line)}
-.num,.dark .num{color:#ff8a8a}
-.prices{background:#1b1b1b}
-.row,details{border-color:var(--brand-line)}
-.dark{background:#101010;color:#fff}
-.dark p{color:#d0d0d0}
-.step{border-color:#555}
-.reviews{background:#282828}
-input,textarea{background:#202020;color:#fff;border-color:#777}
-input::placeholder,textarea::placeholder{color:#bfbfbf}
-.links small,footer{color:#d0d0d0}
-footer{background:#0b0b0b}
-.work-gallery img{background:#171717}
-.work-gallery figcaption{color:#fff}
-a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline-color:#ff8a8a}
-.skip{background:#fff;color:#111}
+:root{color-scheme:dark;--logo-background:#000000;--logo-panel:#101010;--logo-ink:#f5f5f5;--logo-accent:#fca848;--logo-buttonInk:#000000;--logo-textAccent:#fca848;--logo-muted:#bababa;--logo-line:#3d3d3d;--logo-header:#000000;--logo-alternate:#000000;}
+body{background:var(--logo-background);color:var(--logo-ink);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}
+header{background:var(--logo-header);border-color:var(--logo-line);box-shadow:0 5px 24px #00000012}
+.notice{background:var(--logo-alternate);color:var(--logo-muted);font-size:10px;letter-spacing:1px}
+.nav{padding:18px 0;gap:30px}.brand span,h1 em{color:var(--logo-textAccent)}
+header .brand.brand-logo{gap:14px;flex-shrink:0;align-items:center}
+header .brand-logo .brand-icon{width:64px;height:76px;object-fit:contain}
+header .brand-logo .brand-wordmark{width:230px;height:76px;object-fit:contain}
+nav{gap:24px}nav a{color:var(--logo-ink);font-weight:600;font-size:12px;letter-spacing:.25px}nav a:hover{color:var(--logo-textAccent)}
+.hero{grid-template-columns:.95fr 1.05fr;gap:48px;padding:76px 0 84px;align-items:center}
+h1{font-size:clamp(44px,5.6vw,76px);line-height:1.07;letter-spacing:-2.7px;font-weight:800}
+h2{font-weight:750;letter-spacing:-1.3px}h3{font-weight:700;line-height:1.35}
+.lead{font-size:17px;line-height:1.8}.lead,.intro,.small,.note,.card p,details p{color:var(--logo-muted)}
+.eyebrow,.num,.dark .num{color:var(--logo-textAccent)}.eyebrow{letter-spacing:2.2px}
+.button{background:var(--logo-accent);border-color:var(--logo-accent);color:var(--logo-buttonInk);border-radius:7px;padding:14px 24px;font-weight:700}
+.button:hover{filter:brightness(.92)}.button.secondary{background:transparent;border-color:var(--logo-line);color:var(--logo-ink)}
+.button.secondary:hover{background:var(--logo-panel);filter:none}.actions{gap:13px}
+.pill{background:var(--logo-panel);color:var(--logo-ink);border:1px solid var(--logo-line);letter-spacing:.4px}
+.strip{background:var(--logo-alternate);color:var(--logo-muted);border-color:var(--logo-line);padding:23px 0}
+.card,.price-list,.form,.work-gallery figure{background:var(--logo-panel);color:var(--logo-ink);border-color:var(--logo-line);border-radius:10px}
+.card{padding:30px}.card a{color:var(--logo-textAccent);font-weight:700}.prices,.dark,.reviews{background:var(--logo-alternate);color:var(--logo-ink)}
+.dark p{color:var(--logo-muted)}.row,details,.step{border-color:var(--logo-line)}.row{padding:19px 0}.row strong{color:var(--logo-ink)}
+input,textarea{background:var(--logo-background);color:var(--logo-ink);border-color:var(--logo-line);border-radius:6px}input::placeholder,textarea::placeholder{color:var(--logo-muted)}
+.links small,footer{color:var(--logo-muted)}.links a:hover{color:var(--logo-textAccent)}
+footer{background:var(--logo-header);border-color:var(--logo-line)}
+.hero .hero-pair{gap:16px;align-items:start}.hero .hero-pair figure{background:var(--logo-panel);border:1px solid var(--logo-line);border-radius:12px;box-shadow:0 12px 32px #00000018}
+.hero .hero-pair figure:last-child{border-color:var(--logo-accent)}.hero .hero-pair img,.work-gallery img{background:var(--logo-background)}
+.hero .hero-pair figcaption,.work-gallery figcaption{background:var(--logo-panel);color:var(--logo-ink);border-color:var(--logo-line);letter-spacing:.4px}
+.hero .hero-pair figcaption{padding:15px;font-size:12px;text-transform:uppercase}
+blockquote{font-size:15px;line-height:1.85}cite{color:var(--logo-textAccent)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--logo-textAccent);outline-offset:4px}
+.skip{background:var(--logo-ink);color:var(--logo-background)}
+@media(max-width:900px){.nav{flex-wrap:wrap;gap:16px}nav{flex-wrap:wrap}.hero{gap:30px}}
+@media(max-width:760px){header .brand-logo .brand-icon{width:44px;height:54px}header .brand-logo .brand-wordmark{width:min(190px,58vw);height:54px}.nav{padding:14px 0}.hero{grid-template-columns:1fr;padding:42px 0 52px;gap:32px}h1{letter-spacing:-1.8px}.hero .hero-pair{max-width:500px;margin:auto;width:100%;grid-template-columns:1fr}nav{gap:18px}.card{padding:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
