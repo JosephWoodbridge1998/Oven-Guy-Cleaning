@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "viewport": "320x700",
+      "heroImagesLoaded": true,
+      "cartoonRemoved": true,
+      "columns": 1,
+      "noHorizontalOverflow": true
+    },
+    {
+      "viewport": "390x844",
+      "heroImagesLoaded": true,
+      "cartoonRemoved": true,
+      "columns": 1,
+      "noHorizontalOverflow": true
+    },
+    {
+      "viewport": "1440x1000",
+      "heroImagesLoaded": true,
+      "cartoonRemoved": true,
+      "columns": 2,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "scope": "Local Chromium smoke tests; no live deployment or external email delivery verified."
+}
